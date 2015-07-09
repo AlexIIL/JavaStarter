@@ -38,8 +38,9 @@ public class DependencyJar implements IDependency {
     }
 
     @Override
-    public String getLaunchProperties() {
-        return "";
+    public String getClasspath() {
+        String f = System.getProperty("file.separator");
+        return System.getProperty("user.home") + f + ".java-starter" + f + (isApp ? "apps" : "libs") + f + file;
     }
 
     @Override

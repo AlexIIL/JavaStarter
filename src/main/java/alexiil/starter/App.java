@@ -24,17 +24,20 @@ public class App {
     public static final String START_LOCATION = "folder.start";
     // The location (URL) of the actual app we are trying to run
     public static final String APP_LOCATION = "location";
+    // The class with a main method to start
+    public static final String MAIN_CLASS = "mainclass";
 
     public final List<IDependency> dependencies;
     private final MutableDouble installProgress = new MutableDouble();
-    private String startLocation;
-    public final String name;
+    public String startLocation;
+    public final String name, mainClass;
     private volatile int downloads = 0;
 
     public App(Properties props) {
         List<IDependency> depends = new ArrayList<IDependency>();
         String tempName = "";
         String locationURL = "";
+        String tempMain = "";
         for (Entry<Object, Object> obj : props.entrySet()) {
             String key = (String) obj.getKey();
             String value = props.getProperty(key);
@@ -61,8 +64,12 @@ public class App {
             else if (key.equalsIgnoreCase(APP_LOCATION)) {
                 locationURL = value;
             }
+            else if (key.equalsIgnoreCase(MAIN_CLASS)) {
+                tempMain = value;
+            }
         }
         name = tempName;
+        mainClass = tempMain;
         String file = name + ".jar";
         depends.add(new DependencyJar(name, file, locationURL, true));
 
@@ -81,21 +88,34 @@ public class App {
      * Open the application, downloading all dependencies first (If required)
      */
     public void start() throws IOException {
-        String args = "";
         if (!areDependenciesSatisfied()) {
             installDependencies(false);
             if (!areDependenciesSatisfied())
                 throw new IOException("Dependencies were not satisfied\nBut an exception hasn't happened!\nWhat?");
         }
 
+        String f = System.getProperty("file.separator");
+
+        String args = "-cp \".";
+
         for (IDependency dep : dependencies) {
-            args += dep.getLaunchProperties() + " ";
+            args += System.getProperty("path.separator") + dep.getClasspath();
         }
 
-        String javaDir = System.getProperty("java.home") + "/bin/java";
+        args += "\" " + mainClass;
+
+        String javaDir = System.getProperty("java.home") + f + "bin" + f + "java";
 
         String command = javaDir + " " + args;
-        File launchDir = new File(startLocation);
+        File launchDir = new File(System.getProperty("user.home"), ".java-starter/" + startLocation);
+
+        System.out.println("Launching " + name + " as " + command);
+
+        if (!launchDir.exists()) {
+            launchDir.mkdirs();
+            System.out.println("Created " + launchDir);
+        }
+        // pb.start();
 
         Runtime.getRuntime().exec(command, null, launchDir);
     }
@@ -167,9 +187,9 @@ public class App {
         }
     }
 
-    public void writeInfo(File file) {
+    public boolean writeInfo(File file) {
         if (file.exists())
-            return;
+            return false;
         FileWriter writer = null;
         try {
             writer = new FileWriter(file);
@@ -190,7 +210,7 @@ public class App {
         finally {
             DependencyDownloader.closeQuietly(writer);
         }
-
+        return true;
     }
 
     public boolean consumeFinishedDepDownload() {

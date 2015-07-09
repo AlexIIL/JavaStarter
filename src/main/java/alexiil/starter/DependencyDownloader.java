@@ -19,7 +19,7 @@ public class DependencyDownloader {
                 return download(url, mutable, min, max);
             }
             catch (IOException io) {
-                System.out.println("Attempt #" + (i + 1) + "failed!");
+                System.out.println("Attempt #" + (i + 1) + " failed!");
                 except = new IOException(io);
             }
         }

@@ -4,6 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 public class StartWindow {
     private JFrame frame;
@@ -90,10 +100,12 @@ public class StartWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         pnlThisApp = new JPanel();
+        pnlThisApp.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2), "Install this:"));
         frame.add(pnlThisApp, BorderLayout.SOUTH);
 
         spAppList = new JScrollPane();
-        frame.add(spAppList, BorderLayout.CENTER);
+        spAppList.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2), "Installed apps:"));
+        frame.add(spAppList, BorderLayout.NORTH);
 
         pnlAppList = new JPanel();
         pnlAppList.setBackground(Color.WHITE);
@@ -105,6 +117,7 @@ public class StartWindow {
     private JPanel addPanelToList() {
         JPanel pnl = new JPanel();
         pnlAppList.add(pnl);
+        pnl.setBorder(new LineBorder(Color.GRAY, 1));
         return pnl;
     }
 
@@ -112,6 +125,11 @@ public class StartWindow {
         panel.removeAll();
         panel.setLayout(new FlowLayout());
         panel.add(new JLabel(app.name));
+
+        JButton install = new JButton();
+        install.setText("Install");
+        install.setVisible(panel == pnlThisApp);
+        panel.add(install);
 
         JButton deps = new JButton();
         deps.setText("Download Dependencies");
@@ -121,6 +139,34 @@ public class StartWindow {
         launch.setText("Launch!");
         launch.setEnabled(app.areDependenciesSatisfied());
         panel.add(launch);
+
+        install.addActionListener((event) -> {
+            File location = new File(System.getProperty("user.home"), ".java-starter");
+            File folder = new File(location, app.startLocation);
+            if (app.writeInfo(new File(folder, "app-info"))) {
+                File appList = new File(location, "app-list");
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(appList));
+                    File tempFile = new File(appList, "temp");
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        writer.write(line + "\n");
+                    }
+                    writer.write(app.startLocation);
+                    reader.close();
+                    writer.close();
+
+                    Files.move(appList.toPath(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    install.setVisible(false);
+                    frame.remove(pnlThisApp);
+                    pnlAppList.add(pnlThisApp);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         deps.addActionListener((event) -> {
             Runnable run = DownloadProgress.open(app);
@@ -136,8 +182,19 @@ public class StartWindow {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error while downloading dependencies", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, splitUp(e.getMessage()), "Error while opening the app!", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    private String splitUp(String message) {
+        String holder = "";
+        int index = 0;
+        while (index < message.length()) {
+            int oldIndex = index;
+            index += Math.min(message.length() - index, 40);
+            holder += message.substring(oldIndex, index) + "\n";
+        }
+        return holder;
     }
 }

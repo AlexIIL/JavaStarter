@@ -11,7 +11,7 @@ public interface IDependency {
     public void putInPlace(File currentLocation);
 
     /** This should get the properties required for launching with the dependencies */
-    public String getLaunchProperties();
+    public String getClasspath();
 
     public String getURL();
 
