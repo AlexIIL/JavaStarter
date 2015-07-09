@@ -8,10 +8,18 @@ public interface IDependency {
 
     /** This is given the single file that has been downloaded, and should extract it to the proper place (Somewhere
      * inside of the librarayBase folder) */
-    public void putInPlace(File currentLocation, File libraryBase);
+    public void putInPlace(File currentLocation);
 
     /** This should get the properties required for launching with the dependencies */
-    public String getLaunchProperties(File libraryBase);
+    public String getLaunchProperties();
 
     public String getURL();
+
+    public String getFileName();
+
+    public String getName();
+
+    public boolean isApp();
+
+    public String getType();
 }

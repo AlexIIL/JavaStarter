@@ -1,1 +1,5 @@
 apply plugin: "java"
+
+task buildStarterJar(type: Jar) {
+	
+}
