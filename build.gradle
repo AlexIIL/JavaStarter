@@ -8,4 +8,4 @@ sourceSets {
     }
 }
 
-archiveName = projectDir.getPath().split("/")[6] + "-Installer.jar"
+jar.archiveName = projectDir.getPath().split("/")[6] + "-Installer.jar"
