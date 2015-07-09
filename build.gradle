@@ -2,5 +2,5 @@ apply plugin: "java"
 
 task buildStarterJar(type: Jar) {
 	include "../app-info"
-    archiveName = destinationDir.getPath().split("/")[5] + "-Installer"
+    archiveName = destinationDir.getPath().split("/")[6] + "-Installer"
 }
