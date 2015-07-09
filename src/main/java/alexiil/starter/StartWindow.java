@@ -156,7 +156,7 @@ public class StartWindow {
                     writer.write(app.startLocation);
                     reader.close();
                     writer.close();
-                    
+
                     Files.move(appList.toPath(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     install.setVisible(false);
                     frame.remove(pnlThisApp);
