@@ -1,5 +1,5 @@
 apply plugin: "java"
 
 task buildStarterJar(type: Jar) {
-	
+	from "../app-info"
 }
