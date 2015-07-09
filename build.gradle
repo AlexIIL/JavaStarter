@@ -1,7 +1,7 @@
 apply plugin: "java"
 
 task buildStarterJar(type: Jar) {
-    from "../app-info", "build/classes/**/*.class"
+    from "../app-info", "build/classes/*"
     archiveName = destinationDir.getPath().split("/")[6] + "-Installer.jar"
 }
 
