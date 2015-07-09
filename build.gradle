@@ -1,8 +1,11 @@
 apply plugin: "java"
 
-task buildStarterJar(type: Jar) {
-    from "../app-info", "build/classes/*"
-    archiveName = destinationDir.getPath().split("/")[6] + "-Installer.jar"
+sourceSets {
+    main {
+        resources {
+            include "../app-info"
+        }
+    }
 }
 
-buildStarterJar.dependsOn build
+archiveName = destinationDir.getPath().split("/")[6] + "-Installer.jar"
