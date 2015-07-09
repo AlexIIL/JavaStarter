@@ -1,6 +1,6 @@
 apply plugin: "java"
 
 task buildStarterJar(type: Jar) {
-	from "../app-info"
-    archiveName = destinationDir.subString(destinationDir.indexOf("build/libs/") - 11) + "-Installer"
+	include "../app-info"
+    archiveName = destinationDir.getPath().subString(destinationDir.getPath().indexOf("build/libs/") - 11) + "-Installer"
 }
