@@ -133,11 +133,13 @@ public class StartWindow {
 
         JButton deps = new JButton();
         deps.setText("Download Dependencies");
+        deps.setVisible(panel != pnlThisApp);
         panel.add(deps);
 
         JButton launch = new JButton();
         launch.setText("Launch!");
         launch.setEnabled(app.areDependenciesSatisfied());
+        launch.setVisible(panel != pnlThisApp);
         panel.add(launch);
 
         install.addActionListener((event) -> {

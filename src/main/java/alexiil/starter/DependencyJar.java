@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 public class DependencyJar implements IDependency {
     public final String name, file, url;
@@ -97,5 +98,10 @@ public class DependencyJar implements IDependency {
     @Override
     public String getType() {
         return "jar";
+    }
+
+    @Override
+    public List<IDependency> getDependencies() {
+        return null;
     }
 }

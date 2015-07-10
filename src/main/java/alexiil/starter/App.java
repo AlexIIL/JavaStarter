@@ -85,7 +85,8 @@ public class App {
     }
 
     /**
-     * Open the application, downloading all dependencies first (If required)
+     * Open the application, downloading all dependencies first (If required). Generally, this won't download the
+     * dependencies, unless they were deleted for some reason between opening the launcher and clicking launch.
      */
     public void start() throws IOException {
         if (!areDependenciesSatisfied()) {
@@ -115,7 +116,6 @@ public class App {
             launchDir.mkdirs();
             System.out.println("Created " + launchDir);
         }
-        // pb.start();
 
         Runtime.getRuntime().exec(command, null, launchDir);
     }
