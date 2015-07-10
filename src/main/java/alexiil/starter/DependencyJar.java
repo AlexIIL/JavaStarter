@@ -64,12 +64,6 @@ public class DependencyJar implements IDependency {
         folderBase = new File(folderBase, isApp ? "apps" : "libs");
         if (!folderBase.isDirectory()) {
             folderBase.mkdir();
-            try {
-                Files.setAttribute(folderBase.toPath(), "dos:hidden", true);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         return folderBase;
@@ -103,5 +97,48 @@ public class DependencyJar implements IDependency {
     @Override
     public List<IDependency> getDependencies() {
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((file == null) ? 0 : file.hashCode());
+        result = prime * result + (isApp ? 1231 : 1237);
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DependencyJar other = (DependencyJar) obj;
+        if (file == null) {
+            if (other.file != null)
+                return false;
+        }
+        else if (!file.equals(other.file))
+            return false;
+        if (isApp != other.isApp)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        }
+        else if (!name.equals(other.name))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        }
+        else if (!url.equals(other.url))
+            return false;
+        return true;
     }
 }

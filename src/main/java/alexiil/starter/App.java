@@ -53,6 +53,10 @@ public class App {
                 if (type.equalsIgnoreCase(DEPENDENCY_TYPE_JAR)) {
                     dep = new DependencyJar(dependency, file, location, false);
                     depends.add(dep);
+                    List<IDependency> deps = dep.getDependencies();
+                    if (deps != null) {
+                        depends.addAll(deps);
+                    }
                 }
             }
             else if (key.equalsIgnoreCase(START_LOCATION)) {
@@ -73,7 +77,14 @@ public class App {
         String file = name + ".jar";
         depends.add(new DependencyJar(name, file, locationURL, true));
 
-        dependencies = Collections.unmodifiableList(depends);
+        List<IDependency> secondDepends = new ArrayList<IDependency>();
+        for (IDependency dep : depends) {
+            if (!secondDepends.contains(dep)) {
+                secondDepends.add(dep);
+            }
+        }
+
+        dependencies = Collections.unmodifiableList(secondDepends);
 
         System.out.println("Found the app " + name);
         System.out.println("Dependencies:");
@@ -97,7 +108,9 @@ public class App {
 
         String f = System.getProperty("file.separator");
 
-        String args = "-cp \".";
+        String args;
+
+        args = "-cp \".";
 
         for (IDependency dep : dependencies) {
             args += System.getProperty("path.separator") + dep.getClasspath();
@@ -197,6 +210,8 @@ public class App {
             writer.write(START_LOCATION + "=" + startLocation + "\n");
 
             for (IDependency dep : dependencies) {
+                if (dep.getType() != DEPENDENCY_TYPE_JAR && dep.getType() != DEPENDENCY_TYPE_LWJGL)
+                    continue;
                 writer.write("\n");
                 writer.write(DEPENDENCY_NAME + dep.getName() + "=true\n");
                 writer.write(DEPENDENCY_FILE + dep.getName() + "=" + dep.getFileName() + "\n");

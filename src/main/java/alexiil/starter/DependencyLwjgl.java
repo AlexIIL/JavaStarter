@@ -16,7 +16,14 @@ public class DependencyLwjgl extends DependencyJar {
     @Override
     public List<IDependency> getDependencies() {
         List<IDependency> deps = new ArrayList<IDependency>();
-
+        deps.add(new DependencyNativePart("", "", ""));
         return deps;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        return obj.getClass() == getClass();
     }
 }
