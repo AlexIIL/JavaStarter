@@ -28,4 +28,8 @@ public interface IDependency {
     public boolean isApp();
 
     public String getType();
+
+    public default String getArguments() {
+        return "";
+    }
 }

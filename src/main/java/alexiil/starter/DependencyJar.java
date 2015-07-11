@@ -49,7 +49,7 @@ public class DependencyJar implements IDependency {
         return url;
     }
 
-    private File makeFolders() {
+    protected File makeFolders() {
         File folderBase = new File(System.getProperty("user.home"), ".java-starter");
         if (!folderBase.isDirectory()) {
             folderBase.mkdir();

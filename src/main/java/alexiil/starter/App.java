@@ -58,6 +58,10 @@ public class App {
                         depends.addAll(deps);
                     }
                 }
+                else if (type.equalsIgnoreCase(DEPENDENCY_TYPE_LWJGL)) {
+                    dep = new DependencyLwjgl(file);
+                    depends.add(dep);
+                }
             }
             else if (key.equalsIgnoreCase(START_LOCATION)) {
                 startLocation = value;
@@ -108,9 +112,13 @@ public class App {
 
         String f = System.getProperty("file.separator");
 
-        String args;
+        String args = "";
 
-        args = "-cp \".";
+        for (IDependency dep : dependencies) {
+            args += dep.getArguments();
+        }
+
+        args += "-cp \".";
 
         for (IDependency dep : dependencies) {
             args += System.getProperty("path.separator") + dep.getClasspath();
@@ -121,7 +129,7 @@ public class App {
         String javaDir = System.getProperty("java.home") + f + "bin" + f + "java";
 
         String command = javaDir + " " + args;
-        File launchDir = new File(System.getProperty("user.home"), ".java-starter/" + startLocation);
+        File launchDir = new File(System.getProperty("user.home"), ".java-starter" + f + startLocation);
 
         System.out.println("Launching " + name + " as " + command);
 
